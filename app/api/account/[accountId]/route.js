@@ -1,6 +1,7 @@
 import dbConnect from "@/dbConfig/dbConnect";
-import accountService from "@/services/account.service";
 import { NextResponse } from "next/server";
+
+import accountService from "@/services/account.service";
 const accountInstance = new accountService();
 
 export async function GET(req, { params })
