@@ -57,7 +57,12 @@ const personalSchema = new Schema({
         type: String,
         enum: ['Yes', 'No'],
         required: true
-    }
+    },
+    holdings:
+    [{
+        type: Schema.Types.ObjectId,
+        ref: 'Partner'    
+    }]
 })
 
 export const Personal = mongoose.models?.Personal || mongoose.model('Personal', personalSchema)

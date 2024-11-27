@@ -9,14 +9,11 @@ export async function POST(req)
     {
         await dbConnect();
         const { type, email, contact } = await req.json();
-
-        console.log(type, email, contact)
-
         const account = await accountInstance.createAccount(type, email, contact);
         if(!account)
             return NextResponse.json({message: 'Failed to create an account'})
 
-        return NextResponse.json({message: 'Account created'})
+        return NextResponse.json({account, message: 'Account created'})
     }
     catch(error)
     {

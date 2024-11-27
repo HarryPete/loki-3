@@ -34,34 +34,7 @@ const FormSchema = z.object({
 
 const CreateProfile = () =>
 {
-
-    const [ accounts, setAccounts ] = useState(null);
-    const [ entityType, setEntityType ] = useState(0);
-    const [ personalType, setPersonalType ] = useState(null);
     const router = useRouter();
-
-    useEffect(()=>
-    {
-        getAccounts();
-    },[])
-
-    async function getAccounts() 
-    {
-        try
-        {
-            const url = '/api/account'
-            const response = await axios.get(url);
-            const entityType = response.data.filter((account) => account.type === "Entity");
-            const personalType = response.data.filter((account) => account.type === "Personal");
-            setEntityType(entityType);
-            setPersonalType(personalType)
-            setAccounts(response.data);
-        }
-        catch(error)
-        {
-            toast(error)
-        } 
-    }
 
     const form = useForm({
         resolver: zodResolver(FormSchema),
@@ -78,9 +51,10 @@ const CreateProfile = () =>
         try
         {
             const url = '/api/account'
-            const response = await axios.post(url, data)
+            const response = await axios.post(url, data);
+            const account = response.data.account
+            router.push(`/accounts/create/details?id=${account._id}&&type=${account.type}`)
             toast(response.data.message);
-            getAccounts();
         }
         catch(error)
         {
@@ -104,6 +78,20 @@ const CreateProfile = () =>
             toast(error);
         }
     }
+
+    // async function updateAccountNames()
+    // {
+    //   try
+    //   {
+    //     const url = '/api/updateAccName'
+    //     const response = await axios.get(url);
+    //     console.log(response.data.message)
+    //   }
+    //   catch(error)
+    //   {
+
+    //   }
+    // }
 
     return (
     <div className="flex flex-col lg:flex-row gap-4">
@@ -161,65 +149,12 @@ const CreateProfile = () =>
           )}
         />
         <Button type="submit">Create Account</Button>
-        {accounts && <div className="w-full flex gap-4 justify-center">
-        <div className="flex flex-col items-center gap-4 w-full lg:w-1/3 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-          <span>Accounts</span>
-          <p className="font-bold text-2xl">{accounts.length}</p>
-        </div>
-        <div className="flex flex-col items-center gap-4 w-full lg:w-1/3 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-          <span>Entity</span>
-          <p className="font-bold text-2xl">{entityType.length}</p>
-        </div>
-        <div className="flex flex-col items-center gap-4 w-full lg:w-1/3 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-          <span>Personal</span>
-          <p className="font-bold text-2xl">{accounts.length - entityType.length}</p>
-        </div>        
-      </div>}
-      </form>
-
+    
+{/*       
+      <Button onClick={updateAccountNames}>Update account names</Button> */}
+      </form>  
     </Form>
-    {accounts && 
-    <div className="h-[80vh] overflow-y-scroll flex flex-col gap-4 w-full lg:w-1/2 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-        <h1 className="text-lg font-bold">Entity Accounts</h1>
-        {entityType.map((account)=>
-        (
-            <div className="flex flex-col gap-2" >
-                <p>{maskAccountNumber(account._id).toUpperCase()}</p>
-                <p>Account Type : {account.type}</p>
-                <p>Email : {account.email}</p>
-                <p>Contact : {account.contact}</p>
-                <div className="flex gap-2">
-                    {account?.personalDetails || account?.entityDetails ? 
-                    <Button className="w-fit" onClick={()=> router.push(`/accounts/search?accNo=${account._id}&&type=${account.type}`)}>View</Button> :
-                    <Button className="w-fit" onClick={()=> router.push(`/accounts/create/details?id=${account._id}&&type=${account.type}`)}>Details</Button>}
-                    
-                    <Button className="w-fit" onClick={(e)=> handleDelete(e, account._id)}>Delete</Button>
-                    <p className="w-fit flex flex-col items-center justify-center px-2 text-white rounded text-sm" style={{backgroundColor : account?.personalDetails || account?.entityDetails ? 'green' : 'red'}} >{account?.personalDetails || account?.entityDetails ? 'Completed' : 'Pending'}</p>
-                </div>
-            </div>
-        ))}
-    </div>}
-    {accounts && 
-    <div className="h-[80vh] overflow-y-scroll flex flex-col gap-4 w-full lg:w-1/2 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-        <h1 className="text-lg font-bold">Personal Accounts</h1>
-        {personalType.map((account)=>
-        (
-            <div className="flex flex-col gap-2" >
-                <p>{maskAccountNumber(account._id).toUpperCase()}</p>
-                <p>Account Type : {account.type}</p>
-                <p>Email : {account.email}</p>
-                <p>Contact : {account.contact}</p>
-                <div className="flex gap-2">
-                    {account?.personalDetails || account?.entityDetails ? 
-                    <Button className="w-fit" onClick={()=> router.push(`/accounts/search?accNo=${account._id}&&type=${account.type}`)}>View</Button> :
-                    <Button className="w-fit" onClick={()=> router.push(`/accounts/create/details?id=${account._id}&&type=${account.type}`)}>Details</Button>}
-                    
-                    <Button className="w-fit" onClick={(e)=> handleDelete(e, account._id)}>Delete</Button>
-                    <p className="w-fit flex flex-col items-center justify-center px-2 text-white rounded text-sm" style={{backgroundColor : account?.personalDetails || account?.entityDetails ? 'green' : 'red'}} >{account?.personalDetails || account?.entityDetails ? 'Completed' : 'Pending'}</p>
-                </div>
-            </div>
-        ))}
-    </div>}
+    
     </div>
   )
 }

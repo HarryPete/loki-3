@@ -14,22 +14,12 @@ export default function Home()
 
   const [ data, setData ] = useState(null);
   const [ transactions, setTransactions ] = useState(null);
-  const [ loading, setLoading ] = useState(true)
+  const [ loading, setLoading ] = useState(true);
 
 	useEffect(()=>
 	{
-    // getTransactions();
-		const pieData = [];
-		transactionHistory.forEach((transaction)=>
-    	{
-        	const type = transaction.type;
-        	const existingType = pieData.find((record) => record.Type === type);
-        	if(existingType)
-           		existingType.Count += 1;
-        	else
-            	pieData.push({ Type: type, Count: 1})
-    	});
-		setData(pieData);
+    getTransactions();
+		
 	},[])
 
   const getTransactions = async () =>
@@ -38,9 +28,20 @@ export default function Home()
     {
       const url = '/api/transactions'
       const response = await axios.get(url);
-      console.log(response.data)
-      // const sortedTransactions = response.data.sort((a,b)=> new Date(b.date) - new Date(a.date)).slice(0,5);
+      const sortedTransactions = response.data.sort((a,b)=> new Date(b.date) - new Date(a.date)).slice(0,4);
       setTransactions(sortedTransactions);
+
+      const pieData = [];
+		  response.data.forEach((transaction)=>
+    	{
+        	const type = transaction.type;
+        	const existingType = pieData.find((record) => record.Type === type);
+        	if(existingType)
+           		existingType.Count += 1;
+        	else
+            	pieData.push({ Type: type, Count: 1})
+    	});
+		  setData(pieData);
       
     }
     catch(error)
@@ -55,17 +56,22 @@ export default function Home()
 
   console.log(transactions)
 
+  if(loading)
+    return
 
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Link href="/search" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
+        <Link href="/web" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
           <h2 className="text-xl font-medium">Web search</h2>
         </Link>
         <Link href="/accounts" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
           <h2 className="text-xl font-medium">Accounts</h2>
         </Link>
-        <Link href="/transactions" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
+        {/* <Link href="/transactions" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
+          <h2 className="text-xl font-medium">Transactions</h2>
+        </Link> */}
+        <Link href="" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
           <h2 className="text-xl font-medium">Transactions</h2>
         </Link>
         <Link href="/screen" className='h-64 cursor-pointer flex items-center justify-center bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'>
@@ -81,16 +87,19 @@ export default function Home()
         <div className="grid gap-4 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
           <h2 className="text-xl font-bold text-center">Recent Transactions</h2>
           <div className="grid gap-4">
-            {/* {transactions.map((transaction)=>
+            {transactions.map((transaction)=>
             (
-              <Link href="/transactions" key={transaction.from} className='h-18 flex flex-col gap-1 cursor-pointer'>
-                <div className="flex items-center justify-between">
-                  
-                  <p>${transaction.amount}</p>
+              <Link href="/transactions" key={transaction._id} className='h-18 flex justify-between gap-1 cursor-pointer'>
+                <div className="flex flex-col ">
+                  <p>{transaction.primaryAccount.accountName}</p>
+                  <p className="text-gray-400 text-sm">{transaction.description}</p>
                 </div>
-                <p className="text-gray-400 text-sm">{transaction.description}</p>
+                <div>
+                    <p className="text-end">${transaction.amount}</p>
+                    <p className="text-gray-400 text-sm text-end">{transaction.type}</p>
+                  </div>
               </Link>
-            ))} */}
+            ))}
           </div>
         </div>
         

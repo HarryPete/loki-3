@@ -3,7 +3,7 @@ const MOA = ({account}) =>
   return(
     <div className="w-[35vw] flex flex-col gap-6 bg-white p-4 rounded dark:text-black">
       <h1 className="text-2xl font-bold text-center mt-4">Memorandum of Association</h1>
-      <div className="flex flex-col gap-2">
+      {account.entityDetails.buyers.length>0 ? <div className="flex flex-col gap-2">
       <h1 className="text-lg font-bold bg-gray-400 p-2 rounded">Buyers</h1>
       {account.entityDetails.buyers.map((buyer) =>
       (
@@ -13,8 +13,8 @@ const MOA = ({account}) =>
           <p>Location: {buyer.region}</p>
         </div>
       ))}
-      </div>
-      <div className="flex flex-col gap-2">
+      </div> : <p className="text-gray-400 italic text-lg text-center">No Buyers</p>}
+      {account.entityDetails.sellers.length>0 ? <div className="flex flex-col gap-2">
       <h1 className="text-lg font-bold bg-gray-400 p-2 rounded">Sellers</h1>
       {account.entityDetails.sellers.map((seller) =>
       (
@@ -24,7 +24,7 @@ const MOA = ({account}) =>
           <p>Location: {seller.region}</p>
         </div>
       ))}
-      </div>
+      </div>: <p className="text-gray-400 italic text-lg text-center">No Sellers</p>}
     </div>
   )
 }

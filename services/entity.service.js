@@ -43,6 +43,19 @@ class entityService
         }
     }
 
+    async updatePartnership(entityId, partnershipId)
+    {
+        try
+        {
+            await Entity.findByIdAndUpdate(entityId, { $push: { partners: partnershipId }})
+            return
+        }
+        catch(error)
+        {
+            throw error
+        }
+    }
+
     async updateMOA(entityId, buyers, sellers)
     {
         try
@@ -57,6 +70,33 @@ class entityService
         }
     }
 
+    async addBuyer(entityId, buyer)
+    {
+        try
+        {
+            await Entity.findByIdAndUpdate(entityId, { $push: { buyers: buyer }})
+            return
+        }
+        catch(error)
+        {
+            console.log(error);
+            throw error
+        }
+    }
+
+    async addSeller(entityId, seller)
+    {
+        try
+        {
+            await Entity.findByIdAndUpdate(entityId, { $push: { sellers: seller }})
+            return
+        }
+        catch(error)
+        {
+            console.log(error);
+            throw error
+        }
+    }
 
     async deleteEntity(id)
     {

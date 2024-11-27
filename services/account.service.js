@@ -1,5 +1,7 @@
 import { Account } from "@/models/account.model";
+import { Article } from "@/models/article.model";
 import { Entity } from "@/models/entity.model";
+import { Partner } from "@/models/partner.model";
 import { Passport } from "@/models/passport.model";
 import { Personal } from "@/models/personal.model";
 import { Rental } from "@/models/rental.model";
@@ -28,8 +30,8 @@ class accountService
         {
             const accounts = await Account.find()
             .populate({ path: 'entityDetails', model: Entity, populate: { path: 'accountDetails', model: Account }})
-            .populate({ path: 'personalDetails', model: Personal, populate: { path: 'accountDetails', model: Account}});
-            ;
+            .populate({ path: 'personalDetails', model: Personal, populate: [{ path: 'accountDetails', model: Account}, { path: 'organisation', model: Entity}, { path: 'passportDetails', model: Passport}]})
+            .populate({ path: 'articles', model: Article });
             return accounts
         }
         catch(error)
@@ -43,9 +45,38 @@ class accountService
         try
         {
             const account = await Account.findById(id)
-            .populate({ path: 'transactions', model: Transaction, populate: [{ path: 'primaryAccount', model: Account, populate: [{ path: 'personalDetails', model: Personal },{ path: 'entityDetails', model: Entity }] }, { path: 'counterParty', model: Account, populate: [{ path: 'personalDetails', model: Personal },{ path: 'entityDetails', model: Entity }] }] })
-            .populate({ path: 'entityDetails', model: Entity, populate: [{ path: 'buyers', model: Entity },{ path: 'sellers', model: Entity }, { path: 'partners.profile', model: Personal, populate: [{ path: 'passportDetails', model: Passport },{ path: 'rentalDetails', model: Rental },{ path: 'organisation', model: Entity}] }]})
-            .populate({ path: 'personalDetails', model: Personal, populate: [{ path: 'passportDetails', model: Passport },{ path: 'rentalDetails', model: Rental },{ path: 'organisation', model: Entity, populate: { path: 'accountDetails', model: Account, populate: { path: 'entityDetails', model: Entity}}}] });
+            .populate({ path: 'transactions', model: Transaction, 
+                populate: 
+                    [
+                        { path: 'primaryAccount', model: Account }, 
+                        { path: 'counterParty', model: Account }
+                    ] })
+            .populate({ path: 'entityDetails', model: Entity, 
+                populate: 
+                    [
+                        { path: 'buyers', model: Entity },
+                        { path: 'sellers', model: Entity }, 
+                        { path: 'partners', model: Partner, 
+                populate: 
+                    [
+                        { path: 'profile', model: Personal, 
+                populate:
+                    {
+                        path: 'passportDetails', model: Passport
+                    }},
+                        { path: 'entity', model: Entity },
+                    ] 
+                    }]})
+            .populate({ path: 'personalDetails', model: Personal, 
+                populate: 
+                    [
+                        { path: 'passportDetails', model: Passport },
+                        { path: 'rentalDetails', model: Rental },
+                        { path: 'organisation', model: Entity, 
+                            populate: { path: 'accountDetails', model: Account, 
+                            populate: { path: 'entityDetails', model: Entity }}}
+                    ] })
+            .populate({ path: 'articles', model: Article })
             return account
         }
         catch(error)
@@ -67,11 +98,11 @@ class accountService
         }
     }
 
-    async updatePersonal(accountId, personalId)
+    async updatePersonal(accountId, personalId, accountName)
     {
         try
         {
-            await Account.findByIdAndUpdate(accountId, { $set: { personalDetails : personalId }})
+            await Account.findByIdAndUpdate(accountId, { $set: { personalDetails : personalId, accountName }})
             return
         }
         catch(error)
@@ -80,11 +111,24 @@ class accountService
         }
     }
 
-    async updateAccountName(accountId, accountName)
+    // async updateAccountName(accountId, accountName)
+    // {
+    //     try
+    //     {
+    //         await Account.findByIdAndUpdate(accountId, { $set: { accountName }})
+    //         return
+    //     }
+    //     catch(error)
+    //     {
+    //         throw error
+    //     }
+    // }
+
+    async updateAssociation(accountId, articleId)
     {
         try
         {
-            await Account.findByIdAndUpdate(accountId, { $set: { accountName }})
+            await Account.findByIdAndUpdate(accountId, { $set: { articles: articleId }})
             return
         }
         catch(error)
@@ -92,7 +136,6 @@ class accountService
             throw error
         }
     }
-
 
     async updateAccountTransaction(accountId, transactionId)
     {

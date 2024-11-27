@@ -12,12 +12,12 @@ export async function POST(req)
         await dbConnect();
         const entityDetails = await req.json();
 
+        const accountName = entityDetails.name; 
         const entity = await entityInstance.createEntity(entityDetails);
         if(!entity)
             return NextResponse.json({message: 'Failed to create an entity'})
 
-        await accountInstance.updateEntity(entityDetails.accountDetails, entity._id.toString())
-        console.log('KYC Completed')
+        await accountInstance.updateEntity(entityDetails.accountDetails, entity._id.toString(), accountName)
         return NextResponse.json({message: 'KYC Completed'})
     }
     catch(error)

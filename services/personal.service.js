@@ -1,3 +1,4 @@
+import { Account } from "@/models/account.model";
 import { Personal } from "@/models/personal.model";
 
 class personalService
@@ -34,7 +35,7 @@ class personalService
     {
         try
         {
-            const personal = await Personal.find();
+            const personal = await Personal.find().populate({ path: 'accountDetails', model: Account});
             return personal
         }
         catch(error)
@@ -52,6 +53,21 @@ class personalService
         }
         catch(error)
         {
+            throw error
+        }
+    }
+
+    async updatePartnership(personalId, partnershipId)
+    {
+        try
+        {
+            console.log('Service', personalId, partnershipId);
+            await Personal.findByIdAndUpdate(personalId, { $push: {holdings: partnershipId}});
+            return
+        }
+        catch(error)
+        {
+            console.log(error);
             throw error
         }
     }

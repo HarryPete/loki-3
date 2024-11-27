@@ -158,7 +158,7 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
                 <SelectContent>
                 {accounts.map((account)=>
                 (
-                    <SelectItem value={account?.entityDetails?.accountDetails?._id ?? account.personalDetails.accountDetails._id}>{account?.personalDetails?.firstname ? (account.personalDetails.firstname +' ' +account.personalDetails.lastname) : account.entityDetails.name}</SelectItem>
+                    <SelectItem value={account?.entityDetails?.accountDetails?._id ?? account.personalDetails.accountDetails._id}>{account.accountName}</SelectItem>
                 ))}
                 </SelectContent>
               </Select>

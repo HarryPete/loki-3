@@ -24,9 +24,9 @@ class transactionService
     {
         try
         {
-            const transactions = await Transaction.find({})
-            .populate({path: 'primaryAccount', model: Account, populate: [{ path: 'personalDetails', path: Personal }, { path: 'entityDetails', path: Entity }]})
-            .populate({path: 'counterParty', model: Account, populate: [{ path: 'personalDetails', path: Personal }, { path: 'entityDetails', path: Entity }]});
+            const transactions = await Transaction.find()
+            .populate({path: 'primaryAccount', model: Account})
+            .populate({path: 'counterParty', model: Account});
             return transactions
         }   
         catch(error)

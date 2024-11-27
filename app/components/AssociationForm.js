@@ -18,14 +18,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const FormSchema = z.object({
     profile: z.string().min(3,{
       message: "Select profile",
-    }),
-    equity: z.string().min(1,{
-      message: "Enter valid equity",
-    }),      
-    description: z.string()
+    })     
 })
   
-const TradeForm = ({id, setShowTradeForm}) =>
+const AssociationForm = ({title, setAssociationForm}) =>
 {
     const [ accounts, setAccounts ] = useState(null);
     const [ loading, setLoading ] = useState(true); 
@@ -33,14 +29,14 @@ const TradeForm = ({id, setShowTradeForm}) =>
 
     useEffect(()=>
     {
-        getPersonalAccounts();
+        getAccounts();
     },[])
 
-    const getPersonalAccounts = async () =>
+    const getAccounts = async () =>
     {
         try
         {
-            const url = '/api/personal'
+            const url = '/api/account'
             const response = await axios.get(url);
             setAccounts(response.data);
         }
@@ -54,13 +50,38 @@ const TradeForm = ({id, setShowTradeForm}) =>
         }
     }
 
-    const onSubmit = async (data) =>
+    const onSubmit = (data) =>
+    {
+        setProfiles((prev)=> [...prev, data.profile]);
+    }
+
+    const form = useForm({
+        resolver: zodResolver(FormSchema),
+        defaultValues: 
+        {
+            profile: ""
+        }
+    })
+
+    const removeProfiles = (id) =>
+    {
+        const updatedProfiles = profiles.filter((account)=> account !== id);
+        setProfiles(updatedProfiles)
+    }
+
+    const getProfileName = (account) =>
+    {
+        const profileDetail = accounts.find((acc)=> acc._id == account);
+        return profileDetail.accountName
+    }
+    
+    const updateAssociation = async () =>
     {
         try
         {
-            const url = `/api/entity/${id}`
-            const response = await axios.put(url, data)
-            console.log(response.data.message)
+            const url = `/api/article/${title}`
+            const response = await axios.post(url, {associations: profiles})
+            console.log(response.data)
         }
         catch(error)
         {
@@ -68,28 +89,16 @@ const TradeForm = ({id, setShowTradeForm}) =>
         }
     }
 
-    const form = useForm({
-        resolver: zodResolver(FormSchema),
-        defaultValues: 
-        {
-            profile: "",
-            equity: "", 
-            description: ""
-        }
-    })
-
-    console.log(accounts)
-
     if(loading)
         return
 
     return(
         <div className="w-[40vw] bg-white p-8 rounded">
             
-        <h1 className="text-2xl font-bold mb-4 text-red-600">Trade Licence</h1>
+        <h1 className="text-2xl font-bold mb-4 text-red-600">Article Association</h1>
         <Form {...form} className="w-[40vw] bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col items-end lg:flex-row gap-4">
         
         <FormField
           control={form.control}
@@ -106,57 +115,33 @@ const TradeForm = ({id, setShowTradeForm}) =>
                 <SelectContent>
                 {accounts.map((account)=>
                 (
-                    <SelectItem key={account._id} value={account._id}>{account.accountDetails.accountName}</SelectItem>
+                    <SelectItem key={account._id} value={account._id}>{account.accountName}</SelectItem>
                 ))}
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
-        />
-
-        <FormField
-        control={form.control}
-        name="equity"
-        render={({ field }) => (
-	    <FormItem className="w-full">
-	        <FormLabel>Equity</FormLabel>
-	        <FormControl>
-		    <Input {...field} />
-	        </FormControl>
-	        <FormMessage />
-	    </FormItem>)}/>
-        
-        <FormField
-        control={form.control}
-        name="description"
-        render={({ field }) => (
-	    <FormItem className="w-full">
-	        <FormLabel>Equity</FormLabel>
-	        <FormControl>
-		    <Input {...field} />
-	        </FormControl>
-	        <FormMessage />
-	    </FormItem>)}/>
-
+        /> 
+        <Button type="submit">Add Profile</Button>       
     </div> 
-    <Button type="submit">Add Profile</Button>
-    
-    <Button className="ml-2" type="submit" onClick={()=> setShowTradeForm(false)}>Cancel</Button>
+
     {profiles.length > 0 &&
     <div className="flex flex-wrap gap-2">
         {profiles.map((account,index)=>
         (
-            <p className="bg-gray-300 rounded px-3 py-1 cursor-pointer" onClick={()=> removeProfiles(account.profile)}>{getProfileName(account) +' at ' +account.equity +'% equity'}</p>
+            <p className="bg-gray-300 rounded px-3 py-1 cursor-pointer text-sm" onClick={()=> removeProfiles(account)}>{getProfileName(account)}</p>
         ))}
     </div>}
     
     </form>
     </Form>
     <div className="flex gap-2 mt-2">
+        <Button onClick={updateAssociation}>Update Association</Button>
+        <Button type="submit" onClick={()=> setAssociationForm(false)}>Cancel</Button>
     </div>
     </div>
     )
 }
 
-export default TradeForm
+export default AssociationForm

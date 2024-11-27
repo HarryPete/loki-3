@@ -69,16 +69,10 @@ const entitySchema = new Schema({
         }
     ],
     partners:
-    [
-        {
-            profile: 
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Personal'
-            },
-            equity: Number
-        }
-    ]
+    [{
+        type: Schema.Types.ObjectId,
+        ref: 'Partner'    
+    }]
 })
 
 export const Entity = mongoose.models?.Entity || mongoose.model('Entity', entitySchema);
