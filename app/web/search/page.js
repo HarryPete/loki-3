@@ -9,6 +9,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 import fintsAD from '../../../assets/fintsAD.jpg'
+import Loader from "@/app/components/Loader";
 
 const Search = ()  =>
 {
@@ -70,7 +71,7 @@ const Search = ()  =>
 
 
     if(loading)
-        return
+        return <Loader/>
 
     return(
         <div className="w-full flex flex-col gap-2">
@@ -96,7 +97,7 @@ const Search = ()  =>
     )
 }
 
-const Loader = () =>
+const Loading = () =>
 {
     return(
         <div>
@@ -107,4 +108,4 @@ const Loader = () =>
     )
 }
 
-export default Loader
+export default Loading

@@ -55,23 +55,33 @@ class accountService
                 populate: 
                     [
                         { path: 'buyers', model: Entity },
-                        { path: 'sellers', model: Entity }, 
+                        { path: 'sellers', model: Entity },
+                        { path: 'clients', model: Personal,
+                            populate:
+                            {
+                                path: 'passportDetails', model: Passport
+                            }
+                        }, 
                         { path: 'partners', model: Partner, 
-                populate: 
-                    [
-                        { path: 'profile', model: Personal, 
-                populate:
-                    {
-                        path: 'passportDetails', model: Passport
-                    }},
-                        { path: 'entity', model: Entity },
-                    ] 
-                    }]})
+                            populate: 
+                            [
+                                { path: 'profile', model: Personal, 
+                                    populate:
+                                    {
+                                        path: 'passportDetails', model: Passport
+                                    }
+                                },
+                                { path: 'entity', model: Entity },
+                            ]        
+                        }
+                    ]})
             .populate({ path: 'personalDetails', model: Personal, 
                 populate: 
                     [
                         { path: 'passportDetails', model: Passport },
                         { path: 'rentalDetails', model: Rental },
+                        { path: 'holdings', model: Partner, 
+                            populate: { path: 'entity', model: Entity } },
                         { path: 'organisation', model: Entity, 
                             populate: { path: 'accountDetails', model: Account, 
                             populate: { path: 'entityDetails', model: Entity }}}

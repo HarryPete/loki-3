@@ -2,8 +2,6 @@ import Link from "next/link"
 
 function HitInformation({account, setActiveAccount}) 
 {
-    console.log(account);
-
     return(
         <div className="w-[40vw] bg-white p-8 rounded relative">
             <h1 className="text-xl font-bold text-red-600 mb-3">Hit Information</h1>
@@ -18,6 +16,7 @@ function HitInformation({account, setActiveAccount})
                 <div className="flex flex-col gap-4 w-full">
                     <p><span className="font-bold">Industry : </span>{account.entityDetails.industry}</p>
                     <p><span className="font-bold">Region : </span>{account.entityDetails.region}</p>
+                    <p className="text-center italic font-bold bg-green-500 w-full p-2 rounded text-white"><span>No Hit Found </span></p>
                 </div>}
                 <div>
                 <div className="flex flex-col gap-4">

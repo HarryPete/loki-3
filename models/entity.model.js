@@ -72,6 +72,11 @@ const entitySchema = new Schema({
     [{
         type: Schema.Types.ObjectId,
         ref: 'Partner'    
+    }],
+    clients:
+    [{
+        type: Schema.Types.ObjectId,
+        ref: 'Personal'    
     }]
 })
 

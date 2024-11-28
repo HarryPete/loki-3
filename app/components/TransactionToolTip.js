@@ -4,7 +4,6 @@ const TransactionToolTip = ({ active, payload, label }) =>
 	{
 		const type = payload[0].payload.Type
 		const transactions = payload[0].payload.Count
-		console.log(payload)
 
 	  	return (
 		<div style={{ backgroundColor: 'white', color: 'black', padding: '5px', border: '1px solid #ccc', fontSize: '12px'  }}>

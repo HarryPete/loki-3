@@ -1,6 +1,7 @@
 'use client'
 
 import AssociationForm from "@/app/components/AssociationForm";
+import Loader from "@/app/components/Loader";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Image from "next/image";
@@ -40,11 +41,8 @@ const SearchArticle = ()  =>
         }
     }
 
-    console.log(article)
-
-
     if(loading)
-        return
+        return <Loader/>
 
     return(
         <div className="w-full flex flex-col gap-4 text-lg">

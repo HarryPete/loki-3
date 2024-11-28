@@ -6,6 +6,7 @@ import ArticleForm from "../components/ArticleForm"
 import axios from "axios"
 import ArticleCard from "../components/Article"
 import { useRouter } from "next/navigation"
+import Loader from "../components/Loader"
 
 const Web = () =>
 {
@@ -38,6 +39,9 @@ const Web = () =>
             setLoading(false)
         }
     }
+
+    if(loading)
+        return <Loader/>
     
 
     return(

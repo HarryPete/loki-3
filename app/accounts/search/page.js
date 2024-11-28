@@ -1,5 +1,6 @@
 'use client'
 
+import Loader from "@/app/components/Loader";
 import MOAForm from "@/app/components/MOAForm";
 import PersonalCard from "@/app/components/PersonalCard";
 import ProfileCrad from "@/app/components/ProfileCard";
@@ -36,14 +37,7 @@ const Search = ()  =>
         try
         {
             const url = `/api/account/${id}`
-            const response = await axios.get(url, 
-                {
-                    headers: 
-                    {
-                        'Cache-Control': 'no-cache'
-                    }
-                }
-            );
+            const response = await axios.get(url);
             setAccount(response.data);
             const sortedTransactions = response.data.transactions.sort((a,b)=> new Date(a.date) - new Date(b.date));
             setTransactions(sortedTransactions);
@@ -70,11 +64,8 @@ const Search = ()  =>
         }
     }
 
-    console.log(account)
-
-
     if(loading)
-        return
+        return <Loader/>
 
     return(
         <div className="w-full">
@@ -155,7 +146,7 @@ const Search = ()  =>
     )
 }
 
-const Loader = () =>
+const Loading = () =>
 {
     return(
         <div>
@@ -166,4 +157,4 @@ const Loader = () =>
     )
 }
 
-export default Loader
+export default Loading

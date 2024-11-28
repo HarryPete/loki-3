@@ -5,7 +5,7 @@ const KYC = ({data}) =>
 {
 
     return(
-        <div className="w-[40vw] flex flex-col border p-8 rounded-xl gap-6 bg-white text-black">
+        <div className="w-[40vw] flex flex-col border p-8 rounded-xl gap-4 bg-white text-black">
             
                 <div className='w-full flex justify-between border-b-2 pb-4'>
                     <h1 className="text-red-600 font-bold text-2xl">KYC</h1>
@@ -59,6 +59,16 @@ const KYC = ({data}) =>
                     <p className="font-semibold">EMAIL</p>
                     <p className="pt-2">{data.email}</p>
                 </div>
+
+                {data.personalDetails.holdings?.length > 0 &&
+                <div>
+                    <p className="font-semibold">HOLDINGS</p>
+                    <div className='flex flex-col gap-2 pt-2'>
+                    {data.personalDetails.holdings.map((holding)=>
+                        <p>{holding.description === "Trustee" ? ' Trustee, ' : holding.equity +'%, '}<span className='font-bold'>{holding.entity.name}</span></p>
+                    )}
+                    </div>
+                </div>}
 
                 <div>
                     <p className="font-semibold">ADDRESS</p>

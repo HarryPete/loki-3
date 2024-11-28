@@ -1,13 +1,11 @@
 'use client'
 
-import { transactionHistory } from "@/utility/transactionHistory";
 import Link from "next/link";
 import PieChartComponent from "./components/PieChartComponent";
-import { chartData } from "@/utility/chartData";
-import BarChartComponent from "./components/BarChartComponent";
 import { useEffect, useState } from "react";
 import TransactionToolTip from "./components/TransactionToolTip";
 import axios from "axios";
+import Loader from "./components/Loader";
 
 export default function Home() 
 {
@@ -54,10 +52,9 @@ export default function Home()
     }
   }
 
-  console.log(transactions)
 
   if(loading)
-    return
+    return <Loader/>
 
   return (
     <div className="flex flex-col gap-6">
