@@ -76,7 +76,7 @@ const FormSchema = z.object({
     country: z.string().min(3,{
       message: "Enter valid country"
     }),
-    city: z.string().min(6,{
+    city: z.string().min(4,{
       message: "Enter valid city"
     }),
     zipcode: z.string().min(4,{

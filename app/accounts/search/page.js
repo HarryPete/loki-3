@@ -25,12 +25,16 @@ const Search = ()  =>
     const [ showMOAForm, setShowMOAForm ] = useState(false); 
     const [ showTradeForm, setShowTradeForm ] = useState(false); 
     const [ showTransactions, setShowTransactions ] = useState(false)
+    const [ showReferralInfo, setShowReferralInfo ] = useState(false);
+    const [ info, setInfo ] = useState('')
 
     useEffect(()=>
     {
         if(id)
             getAccount();
     },[])
+
+    console.log(transactions)
 
     async function getAccount()
     {
@@ -43,9 +47,14 @@ const Search = ()  =>
             setTransactions(sortedTransactions);
             let credits = 0;
             let debits = 0;
+            
+            console.log(sortedTransactions);
+
             response.data.transactions.forEach((transaction)=>
             {
-                if(id === transaction.primaryAccount && transaction.type !== 'Deposit')
+                if(transaction.type === 'Deposit')
+                    credits += transaction.amount
+                else if(id === transaction.primaryAccount._id)
                     debits += transaction.amount
                 else
                     credits += transaction.amount
@@ -88,8 +97,8 @@ const Search = ()  =>
                             <p className="text-xl mt-2 font-bold">${credit - debit}</p>
                         </div>
                     </div>
-
-                    {/* <Button className="mt-4 p-6 text-md w-full" onClick={()=> setShowMOAForm(true)}>Edit MOA</Button>
+{/* 
+                    <Button className="mt-4 p-6 text-md w-full" onClick={()=> setShowMOAForm(true)}>Edit MOA</Button>
                     <Button className="mt-4 p-6 text-md w-full" onClick={()=> setShowTradeForm(true)}>Edit Trade Licence</Button>
                     <Button className="mt-4 p-6 text-md w-full" onClick={()=> setShowTransactionForm(true)}>+ New Transaction</Button> */}
                 </div>
@@ -116,10 +125,10 @@ const Search = ()  =>
                             <tr>
                                 <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>{new Date(transaction.date).toLocaleDateString()}</td>
                                 <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>${transaction.amount}</td>
-                                <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>{id === transaction.primaryAccount._id ? (transaction.type === 'Deposit' ? 'Self' : 'Debit') : 'Payee'}</td>
+                                <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>{id === transaction.primaryAccount._id ? (transaction.type === 'Deposit' ? 'Self' : 'Debit') : 'Credit'}</td>
                                 
                                 <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>{id === transaction.primaryAccount._id ? (id === transaction.counterParty._id ? '' : transaction.counterParty.accountName) : transaction.primaryAccount.accountName }</td>
-                                <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>{transaction.description}</td>
+                                <td className={`border text-center p-3 ${index%2 === 0 && 'bg-gray-100 dark:text-black'}`}>{transaction.description +' '} {transaction.referral && <span onClick={()=> { setShowReferralInfo(true); setInfo(transaction.referralInfo)}} className="bg-blue-400 text-xs px-2 py-1 rounded text-white cursor-pointer"> Info</span>}</td>
                             </tr>
                         </tbody>
                     ))}
@@ -127,6 +136,14 @@ const Search = ()  =>
                 </div>}
                 </div>: <p className="w-full lg:w-[50%] text-gray-400 italic text-2xl text-center">No Transactions</p>}
 
+                {showReferralInfo && 
+                <div className="h-[100vh] w-full fixed left-0 top-0 flex items-center justify-center" style={{backgroundColor:'rgba(0,0,0,0.7'}} onClick={()=> setShowReferralInfo(false)}>
+                    <div className="bg-white p-8 w-[40%] rounded">
+                        <h1 className="text-2xl font-bold text-center pb-4 text-red-600">Teller Info</h1>
+                        <p>{info}</p>
+                    </div>
+                </div>}
+                
                 {showMOAForm && 
                 <div className="h-[100vh] w-full fixed left-0 top-0 flex items-center justify-center" style={{backgroundColor:'rgba(0,0,0,0.7'}}>
                     <MOAForm account={account} setShowMOA={setShowMOAForm}/>

@@ -54,7 +54,7 @@ const ProfileCard = ({account}) =>
           },1000)
         }
         else
-          setMessages((prev)=> [...prev, {from : 'fp', message: 'Client not found'}]); setMessage('')
+          setMessages((prev)=> [...prev, {from : 'fp', message: 'Client is reluctant to provide information'}]); setMessage('')
       },2000)
     }
 

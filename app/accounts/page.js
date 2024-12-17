@@ -32,6 +32,8 @@ function Accounts()
     const [ noAccounts, setNoAccounts ] = useState(false);
     const router = useRouter();
 
+    console.log(accounts)
+
     useEffect(()=>
     {
         getAccounts();
@@ -43,6 +45,7 @@ function Accounts()
         {
             const url = '/api/account'
             const response = await axios.get(url);
+            console.log(response.data)
             const homeAccounts = response.data.filter((account)=> account.accountNature === 'Home');
             setAccounts(homeAccounts);
         }

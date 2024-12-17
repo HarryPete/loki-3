@@ -59,12 +59,12 @@ const SearchArticle = ()  =>
             <p className="leading-loose">{article.body}</p>
             <p className="leading-loose">{article.footer}</p>
 
-            {/* <Button className="mt-4 p-6 text-md w-full" onClick={()=> setAssociationForm(true)}>Update Association</Button>
+            {/* <Button className="mt-4 p-6 text-md w-full" onClick={()=> setAssociationForm(true)}>Update Association</Button> */}
 
             {associationForm && 
             <div className="h-[100vh] w-full fixed left-0 top-0 flex items-center justify-center" style={{backgroundColor:'rgba(0,0,0,0.7'}}>
                 <AssociationForm title={article.title} setAssociationForm={setAssociationForm}/>
-            </div>} */}
+            </div>}
         </div>
     )
 }

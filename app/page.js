@@ -20,12 +20,15 @@ export default function Home()
 		
 	},[])
 
+  console.log(transactions)
+
   const getTransactions = async () =>
   {
     try
     {
       const url = '/api/transactions'
       const response = await axios.get(url);
+      console.log(response)
       const sortedTransactions = response.data.sort((a,b)=> new Date(b.date) - new Date(a.date)).slice(0,4);
       setTransactions(sortedTransactions);
 
