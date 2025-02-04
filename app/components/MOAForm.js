@@ -52,7 +52,7 @@ const MOAForm = ({account, setShowMOA}) =>
         return <>Loading</>
 
     return(
-        <div className="w-[60vw] bg-white p-8 rounded">
+        <div className="">
             <h1 className="mb-4">Buyers</h1>
 
             <div className="flex flex-wrap gap-2 mb-4">

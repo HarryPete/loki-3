@@ -7,9 +7,9 @@ const Navbar = () =>
 {
 
     return(
-        <Link href='/' className="flex justify-between p-4 border-b-2 cursor-pointerr">
-            <Image src={logo} alt="FINTS360" width="100"/>
-            <ModeToggle/>
+        <Link href='/home' className="flex items-center justify-between p-4 border-b-2 cursor-pointer">
+            <Image  className="h-6 w-fit" src={logo} alt="FINTS360" width="100"/>
+            {/* <ModeToggle/> */}
         </Link>
     )
 }

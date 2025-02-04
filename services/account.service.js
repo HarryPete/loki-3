@@ -54,8 +54,8 @@ class accountService
             .populate({ path: 'entityDetails', model: Entity, 
                 populate: 
                     [
-                        { path: 'buyers', model: Entity },
-                        { path: 'sellers', model: Entity },
+                        { path: 'buyers', populate: { path: 'entity', model: Entity } },
+                        { path: 'sellers', populate: { path: 'entity', model: Entity } },
                         { path: 'clients', model: Personal,
                             populate:
                             {

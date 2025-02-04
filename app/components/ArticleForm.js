@@ -122,9 +122,7 @@ const ArticleForm = ({getArticles, setShowArticleForm}) =>
         return
 
     return(
-        <div className="w-[40vw] bg-white p-8 rounded">
-            
-        <h1 className="text-2xl font-bold mb-4 text-red-600">Article for the day</h1>
+        <div>
         <Form {...form} className="w-[40vw] bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <div className="w-full flex flex-col gap-2">
@@ -253,10 +251,8 @@ const ArticleForm = ({getArticles, setShowArticleForm}) =>
         ))}
     </div>}
     <Button type="submit" onClick={()=> publishArticle()}>Add Association</Button> */}
-    <div className="flex gap-2">
-        <Button type="submit">Publish</Button>
-        <Button onClick={()=> setShowArticleForm(false)}>Cancel</Button>
-    </div>
+
+    <Button type="submit">Publish</Button>
     </form>
     </Form>
     

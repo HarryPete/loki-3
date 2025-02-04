@@ -23,6 +23,16 @@ import { maskAccountNumber } from "@/utility/maskAccountNumber"
 import Fuse from "fuse.js"
 import HitInformation from "../components/HitInformation"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 function matchRange(searchKey, accountName) 
 { 
     const string1 = searchKey.toLowerCase();
@@ -100,8 +110,6 @@ function Screen()
       }
     }
 
-    console.log()
-
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: 
@@ -111,48 +119,61 @@ function Screen()
     })
 
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-8 text-sm">
     <Form {...form} className="h-full">
       
       {/* <Link href='/accounts/create' className="font-bold text-md cursor border p-2 rounded w-fit">+Account</Link> */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="justify-center flex gap-4">
-        
+      <div className="w-full relative">
         <FormField
           control={form.control}
           name="accountName"
           render={({ field }) => (
             <FormItem className="w-full">
               <FormControl>
-                <Input placeholder="Enter Name" className="py-6 rounded" {...field} />
+                <Input placeholder="Screen Name" className="py-6 rounded" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <span className="absolute right-4 top-[50%] translate-y-[-50%] cursor-pointer text-lg" onClick={()=> {form.reset(); setSearchAccounts(null); setNoAccounts(false)}}>x</span>
+        </div>
         <Button type="submit" className="p-6">Search</Button>
-        
-
-      </form>
-    </Form>
-    <Button className="p-6 w-fit" onClick={()=> {form.reset(); setSearchAccounts(null); setNoAccounts(false)}}>Clear</Button>
-    {searchAccounts?.length>0 && <h1><span className="font-bold text-red-600 text-lg">Hits: </span>{searchAccounts?.length}</h1>}
+        </form>
+    </Form>{searchAccounts?.length>0 && <h1 className="font-bold text-lg">Hits: {searchAccounts?.length}</h1>}
 
     {searchAccounts ? 
       <div className="flex flex-col gap-4 w-full">
           {searchAccounts.map((account)=>
           (
-            <div className={`w-full flex flex-col gap-4 border-b-2 p-4 rounded ${account.personalDetails?.isPEP === 'Yes' && 'bg-red-600 text-white'}`} key={account._id} >
+            <div className={`w-full flex flex-col gap-4 border-b-2 p-4 rounded ${account.personalDetails?.isPEP === 'Yes' || account?.entityDetails?.isPEP  === 'Yes' ? 'rounded-lg bg-red-200' : 'rounded-lg bg-green-200'}`} key={account._id} >
                 <div className="w-full flex items-center justify-between">
                   <p className="font-bold">{account.accountName}</p>
-                  <Button onClick={()=> setActiveAccount(account)}>More Info</Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                    <Button variant='outline'>Details</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Hit Information</DialogTitle>
+                        <DialogDescription>
+                        {account.accountName}
+                        </DialogDescription>
+                        <HitInformation account={account}/>
+                    </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+                  
                 </div>
             </div>
           ))}
       </div>: <></>}
-      {noAccounts && <p className="text-gray-400 text-2xl text-center w-full italic">No matches found</p>}
+      {noAccounts && <p className="text-muted-foreground text-base text-center w-full bg-green-200 rounded-md p-2 text-green-500 font-semibold">No hits found</p>}
+      
       {activeAccount && 
         <div className="h-[100vh] w-full fixed left-0 top-0 flex items-center justify-center" style={{backgroundColor:'rgba(0,0,0,0.7'}}  >
-          <HitInformation account={activeAccount} setActiveAccount={setActiveAccount}/>
+          
         </div>}
       </div>
   )

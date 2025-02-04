@@ -84,9 +84,8 @@ const TradeForm = ({id, setShowTradeForm}) =>
         return
 
     return(
-        <div className="w-[40vw] bg-white p-8 rounded">
+        <div className="">
             
-        <h1 className="text-2xl font-bold mb-4 text-red-600">Trade Licence</h1>
         <Form {...form} className="w-[40vw] bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <div className="w-full flex flex-col gap-4">
@@ -132,7 +131,7 @@ const TradeForm = ({id, setShowTradeForm}) =>
         name="description"
         render={({ field }) => (
 	    <FormItem className="w-full">
-	        <FormLabel>Equity</FormLabel>
+	        <FormLabel>Description</FormLabel>
 	        <FormControl>
 		    <Input {...field} />
 	        </FormControl>
@@ -142,7 +141,6 @@ const TradeForm = ({id, setShowTradeForm}) =>
     </div> 
     <Button type="submit">Add Profile</Button>
     
-    <Button className="ml-2" type="submit" onClick={()=> setShowTradeForm(false)}>Cancel</Button>
     {profiles.length > 0 &&
     <div className="flex flex-wrap gap-2">
         {profiles.map((account,index)=>

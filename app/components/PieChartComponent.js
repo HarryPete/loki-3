@@ -1,5 +1,6 @@
 'use client'
 
+import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -8,13 +9,13 @@ const COLORS = ["#6366F1", "#34D399 ", "#FB923C"];
 const PieChartComponent = ({data, yLabel, title, CustomTooltip}) => 
 {
 	return (
-		<motion.div
-			className='bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300'
+		<Card
+			className='p-6'
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.3 }}
 		>
-			<h2 className="text-xl font-bold text-center">{title}</h2>
+			<h2 className="text-lg font-bold text-center">{title}</h2>
 			<div className='h-72'>
 				<ResponsiveContainer width={"100%"} height={"100%"}>
 					<PieChart>
@@ -35,7 +36,7 @@ const PieChartComponent = ({data, yLabel, title, CustomTooltip}) =>
 					</PieChart>
 				</ResponsiveContainer>
 			</div>
-		</motion.div>
+		</Card>
 	);
 };
 

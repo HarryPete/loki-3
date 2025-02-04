@@ -55,19 +55,23 @@ const entitySchema = new Schema({
         zipcode: Number
     },
     buyers:
-    [
+    [{
+        entity:
         { 
             type: Schema.Types.ObjectId,
             ref: 'Entity'
-        }
-    ],
+        },
+        verifiedDate: Date
+    }],
     sellers:
-    [
+    [{
+        entity:
         { 
             type: Schema.Types.ObjectId,
             ref: 'Entity'
-        }
-    ],
+        },
+        verifiedDate: Date
+    }],
     partners:
     [{
         type: Schema.Types.ObjectId,

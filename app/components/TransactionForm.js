@@ -94,16 +94,14 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
         return <>Loading</>
 
     return(
-    <div className="w-[40vw] bg-white dark:text-black p-8 rounded">
-        <h1 className="text-2xl font-bold mb-4 text-red-600">Transact Now!</h1>
+    <div className="">
         <Form {...form} className="w-[40vw] bg-white">
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-        <div className="w-full flex flex-col lg:flex-row gap-4">
         <FormField
         control={form.control}
         name="type"
         render={({ field }) => (
-            <FormItem className="w-full lg:w-1/2">
+            <FormItem className="w-full">
               <FormLabel>Transaction Type</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -131,7 +129,7 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
         control={form.control}
         name="date"
         render={({ field }) => (
-	    <FormItem className="w-full lg:w-1/2">
+	    <FormItem className="w-full">
 	        <FormLabel>Transaction Date</FormLabel>
 	        <FormControl>
 		    <Input type="date" {...field} />
@@ -140,14 +138,12 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
 	    </FormItem>)}/>
 
         
-    </div> 
 
-    <div className="w-full flex flex-col lg:flex-row gap-4">
         <FormField
           control={form.control}
           name="counterParty"
           render={({ field }) => (
-            <FormItem className="w-full lg:w-1/2">
+            <FormItem className="w-full">
               <FormLabel>Counter Party</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -172,7 +168,7 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
         control={form.control}
         name="amount"
         render={({ field }) => (
-	    <FormItem className="w-full lg:w-1/2">
+	    <FormItem className="w-full">
 	        <FormLabel>Amount</FormLabel>
 	        <FormControl>
 		    <Input placeholder="" {...field} />
@@ -181,9 +177,6 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
 	    </FormItem>)}/>
 
       
-      </div>
-
-      <div className="w-full flex flex-col lg:flex-row gap-4">
       <FormField
         control={form.control}
         name="description"
@@ -196,11 +189,8 @@ const TransactionForm = ({id, getAccount, setShowTransactionForm}) =>
 	        <FormMessage />
 	    </FormItem>)}/>
 
-    </div>
-
     
     <Button type="submit">Proceed</Button>
-    <Button className ="ml-4" onClick={()=> setShowTransactionForm(false)} >Cancel</Button>
     </form>
     </Form>
     </div>

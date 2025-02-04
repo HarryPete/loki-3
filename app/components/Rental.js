@@ -5,9 +5,8 @@ const Rental = ({data}) =>
 {
 
     return(
-        <div className="w-[90vw] lg:w-[40vw] flex flex-col gap-8 border p-8 rounded bg-white text-black">
+        <div className="space-y-4 text-sm">
 
-            <p className="text-lg font-bold">RENT AGREEMENT</p>
             <p>{`This Rental Agreement is entered into between the landlord, 
                 and ${data.personalDetails.firstname +' ' +data.personalDetails.lastname}, the tenant, for the property located at ${data.personalDetails.rentalDetails.address.street +', ' +data.personalDetails.rentalDetails.address.city +', ' +data.personalDetails.rentalDetails.address.state +', ' +data.personalDetails.rentalDetails.address.country +' - ' +data.personalDetails.rentalDetails.address.zipcode}. 
                 The rental term will begin on ${new Date(data.personalDetails.rentalDetails.startDate).toLocaleDateString()} 
@@ -24,8 +23,8 @@ const Rental = ({data}) =>
                 the terms of the agreement are being followed. In the event of non-payment or breach of terms, 
                 the landlord may terminate the agreement as specified by local laws.</p>
                 
-            <div>
-                <Image style={{width: '100px', height: '50px'}} src={signature} alt="data"/>
+            <div className='pt-4'>
+                <Image className='h-10 w-fit' src={signature} alt="data"/>
                 <p className='mt-2'>{data.personalDetails.firstname +' ' +data.personalDetails.lastname}</p>
             </div>
         </div>

@@ -16,7 +16,6 @@ const SearchArticle = ()  =>
     const [ associationForm, setAssociationForm ] = useState(false);
     const path = usePathname();
     const title = path.split('/')[3];
-    console.log(title)
 
     useEffect(()=>
     {
@@ -45,16 +44,18 @@ const SearchArticle = ()  =>
         return <Loader/>
 
     return(
-        <div className="w-full flex flex-col gap-4 text-lg">
-            <h1 className="text-5xl font-bold leading-normal">{article.title}</h1>
-            <Image className="w-[100vw] h-fit object-fill" src={article.coverImage} alt={article.title} width={500} height={200}/>
-            <div className="flex flex-wrap gap-2">
+        <div className="w-full flex flex-col gap-4">
+            <h1 className="text-4xl font-bold leading-relaxed">{article.title}</h1>
+            <div className="relative w-[100%] h-[60vh]">
+                <Image className="object-cover" src={article.coverImage} alt={article.title} layout="fill"/>
+            </div>
+            <div className="flex flex-wrap gap-2 text-sm">
             {article.keywords.split(' ').map((key, index)=>
             (
-                <p key={index} className="bg-gray-400 p-1 rounded px-2">{key}</p>
+                <p key={index} className="bg-gray-200 p-1 rounded px-2">{key}</p>
             ))}
             </div>
-            <p className="text-gray-400 text-md">Published on {new Date(article.date).toDateString()}</p>
+            <p className="text-muted-foreground">Published on {new Date(article.date).toDateString()}</p>
             <p className="leading-loose">{article.introduction}</p>
             <p className="leading-loose">{article.body}</p>
             <p className="leading-loose">{article.footer}</p>

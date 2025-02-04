@@ -76,12 +76,13 @@ function Accounts()
     })
 
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-8 md:text-sm text-xs">
     <Form {...form} className="h-full">
       
       {/* <Link href='/accounts/create' className="font-bold text-md cursor border p-2 px-4 rounded-full bg-slate-400 w-fit">Create Account</Link> */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="justify-center flex gap-4">
         
+        <div className="w-full relative">
         <FormField
           control={form.control}
           name="accountName"
@@ -94,53 +95,36 @@ function Accounts()
             </FormItem>
           )}
         />
+        
+        <span className="absolute right-4 cursor-pointer top-[50%] translate-y-[-50%] text-lg" onClick={()=> {form.reset(); setSearchAccounts(null); setNoAccounts(false) }}>x</span>
+        </div>
         <Button type="submit" className="p-6">Search</Button>
       </form>
     </Form>
-    <Button className="p-6 w-fit" onClick={()=> {form.reset(); setSearchAccounts(null); setNoAccounts(false) }}>Clear</Button>
     
-    
-    {/* <Button className="p-6 w-fit" onClick={()=> {setSearchAccounts(null); form.reset()}}>Clear</Button> */}
-
-    {/* {accounts && <div className="w-full flex gap-4 justify-center">
-        <div className="flex flex-col items-center gap-4 w-full lg:w-1/3 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-          <span>Accounts</span>
-          <p className="font-bold text-2xl">{accounts.length}</p>
-        </div>
-        <div className="flex flex-col items-center gap-4 w-full lg:w-1/3 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-          <span>Entity</span>
-          <p className="font-bold text-2xl">{entityType.length}</p>
-        </div>
-        <div className="flex flex-col items-center gap-4 w-full lg:w-1/3 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-300">
-          <span>Personal</span>
-          <p className="font-bold text-2xl">{accounts.length - entityType.length}</p>
-        </div>        
-      </div>} */}
-
-
-
     {searchAccounts ? 
       <div className="flex flex-col gap-4 w-full">
           {searchAccounts.map((account)=>
           (
-              <div className="flex justify-between border-b-2 pb-4 items-center" key={account._id} >
-                  <div>
-                    <p className="font-bold">{account.accountName}</p>
+              <div className="flex lg:flex-row flex-col lg:justify-between items-start border-b-2 pb-4 gap-4" key={account._id} >
+                  <div className="text-sm space-y-1">
+                    <p className="font-semibold">{account.accountName}</p>
                     <p>{maskAccountNumber(account._id).toUpperCase()}</p>
-                    <p className="text-gray-500 font-bold">{account.type}</p>
+                    <p className="text-gray-500">{account.type}</p>
                   </div>
                   <div className="flex h-fit gap-2">
+                  <p className="w-fit flex flex-col items-center justify-center px-2 rounded-lg border">{account?.personalDetails || account?.entityDetails ? 'KYC Completed' : 'KYC Pending'}</p>
+                  
                       {account?.personalDetails || account?.entityDetails ? 
                       <Button className="w-fit" onClick={()=> router.push(`/accounts/search?accNo=${account._id}&&type=${account.type}`)}>View</Button> :
                       <Button className="w-fit" onClick={()=> router.push(`/accounts/create/details?id=${account._id}&&type=${account.type}`)}>Details</Button>}
                       
                       {/* <Button className="w-fit" onClick={(e)=> handleDelete(e, account._id)}>Delete</Button> */}
-                      <p className="w-fit flex flex-col items-center justify-center px-2 text-white rounded text-sm" style={{backgroundColor : account?.personalDetails || account?.entityDetails ? 'green' : 'red'}} >{account?.personalDetails || account?.entityDetails ? 'KYC Completed' : 'KYC Pending'}</p>
-                  </div>
+                      </div>
               </div>
           ))}
       </div> : <></>}
-      {noAccounts && <p className="text-red-600 text-2xl text-center w-full italic">Restricted</p>}
+      {noAccounts && <p className="text-xl text-center w-full">Restricted</p>}
       </div>
   )
 }

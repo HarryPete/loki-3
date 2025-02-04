@@ -19,11 +19,8 @@ export async function POST(req)
         });
 
         const result = await cloudinary.uploader.upload(articleDetails.coverImage);
-        console.log(articleDetails)
         const updatedDetails = {...articleDetails, coverImage: result.url}
-        console.log(updatedDetails)
         await articleInstance.createArticle(updatedDetails)
-                
         return NextResponse.json({message: 'Article published'})
     }
     catch(error)

@@ -74,10 +74,10 @@ const Search = ()  =>
         return <Loader/>
 
     return(
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-2 text-sm leading-relaxed">
             <div className="flex gap-2">
                 <input placeholder="Search" className="border border-gray-400 p-3 lg:w-[50vw] w-full rounded-lg" onChange={(e)=> setSearch(e.target.value)}/>
-                <Button className="p-6 text-lg" onClick={()=> router.push(`/web/search?q=${search}`)}>Search</Button>
+                <Button className="p-6" onClick={()=> router.push(`/web/search?q=${search}`)}>Search</Button>
             </div>
             {articles?.length && <p className="text-gray-400 mb-6">{articles.length*13} searches in 2 sec</p>}
             <div className="flex gap-4">
@@ -86,12 +86,12 @@ const Search = ()  =>
                 {articles.map((article)=>
                 (
                     <div key={articles._id} className="flex flex-col gap-2 lg:w-[60vw] w-full">
-                        <Link href={`/web/fincle/${article.title}`} className="text-blue-500 text-xl font-semibold">{article.title}</Link>
+                        <Link href={`/web/fincle/${article.title}`} className="text-blue-500 text-base font-semibold">{article.title}</Link>
                         <p><span className="text-gray-400">{new Date(article.date).toLocaleDateString()} - </span>{article.introduction}</p>
                     </div>
                 ))}
             </div> : <p className="text-gray-400 text-3xl lg:w-[60vw] w-full h-[30vh] flex items-center justify-center">No search found</p>}
-            <Image src={fintsAD} alt='AD' className="w-[30vw] h-full rounded"/>
+            {/* <Image src={fintsAD} alt='AD' className="w-[30vw] h-full rounded"/> */}
             </div>
         </div>
     )
