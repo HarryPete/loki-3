@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange>
             <Navbar/>
-            <div className="px-[5vw] py-6">
+            <div className="px-[5vw] py-8">
               {children}
               <Toaster />
             </div>
