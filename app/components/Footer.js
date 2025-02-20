@@ -25,7 +25,7 @@ const Footer = () => {
         initial='hidden'
         animate={isInView ? 'visible' : 'hidden'}
         variants={fadeInVariant}
-        className='px-[10vw] space-y-12 rounded-xl justify-center py-20 md:text-sm text-xs bg-orange-300 text-black'
+        className='px-[10vw] space-y-12 rounded-xl justify-center py-20 md:text-sm text-xs bg-orange-500 text-black'
         
       >
         <div className='grid lg:grid-cols-2 grid-cols-1 gap-6'>
@@ -50,9 +50,9 @@ const Footer = () => {
           </motion.div>
           <div>
           <div className='flex md:justify-end items-center justify-center gap-6'>
-            <Image className='h-7 w-fit' src={fints} alt='instagram' />
-            <Image className='h-7 w-fit' src={logo} alt='instagram' />
-            <Image className='h-7 w-fit' src={fintsaml} alt='instagram' />
+            <Image className='h-7 w-fit' src={fints} alt='fints' />
+            {/* <Image className='h-7 w-fit' src={logo} alt='instagram' /> */}
+            <Image className='h-7 w-fit' src={fintsaml} alt='fintsaml' />
           </div>
           </div>
         </div>

@@ -2,13 +2,13 @@ import NextAuth from "next-auth"
 import { cookies } from "next/headers"
 import { encode, decode } from 'next-auth/jwt'
 import { NextResponse } from "next/server";
-import { adminRoutes, authRoutes, userRoutes } from "./routes";
+import { authRoutes, userRoutes } from "./routes";
 
 export default async function middleware(req)
 {
     const { nextUrl } = req;
     const token = await cookies();
-    const cookie = token?.get('__Secure-authjs.session-token');
+    const cookie = token?.get('authjs.session-token');
     
     let user = null;
     if(cookie)
@@ -20,35 +20,20 @@ export default async function middleware(req)
         })
     } 
 
-    console.log(user)
-
     const userRoute = userRoutes.some((route)=> nextUrl.pathname.startsWith(route));
-    const adminRoute = adminRoutes.some((route)=> nextUrl.pathname.startsWith(route));
     const authRoute = authRoutes.some((route)=> nextUrl.pathname.startsWith(route));
 
     if(user?.role === 'visitor' || !user )
-        if(userRoute || adminRoute)
+        if(userRoute)
             return NextResponse.redirect(new URL('/login', nextUrl))
 
     if(user?.role === 'visitor' && authRoute )
         return NextResponse.redirect(new URL('/', nextUrl))
 
-    if(user)
+    if(user?.role=== 'user' && authRoute)
     {
-        if(user.role === 'user' && authRoute)
+        if(authRoute)
             return NextResponse.redirect(new URL('/home', nextUrl))
-    
-        if(user.role !== 'admin' && nextUrl.pathname.startsWith('/admin'))
-            return NextResponse.redirect(new URL('/', nextUrl))
-    
-        if(user.role === 'admin' && nextUrl.pathname.startsWith('/dashboard'))
-            return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
-
-        if(user.role === 'admin' && authRoute)
-            return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
-
-        // if(nextUrl.pathname.startsWith('/admin'))
-        //     return NextResponse.redirect(new URL('/admin/dashboard', nextUrl))
     }
 
     return null

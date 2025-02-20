@@ -1,6 +1,6 @@
 export const userRoutes =
 [
-    '/dashboard'
+    '/home', '/web', '/accounts', '/transactions', 'screen'
 ] 
 
 export const adminRoutes =

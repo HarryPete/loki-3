@@ -31,7 +31,7 @@ const Login = () =>
     const [ success, setSuccess ] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
-    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+    const callbackUrl = searchParams.get('callbackUrl') || '/home'
     const error = searchParams.get('error');
 
     useEffect(() => 
@@ -87,7 +87,7 @@ const Login = () =>
     }
 
     return(
-        <div className='absolute top-0 left-0 h-[100vh] bg-orange-50 w-screen flex items-center justify-center'>
+        <div className='absolute top-0 left-0 h-[100vh] bg-orange-600 w-screen flex items-center justify-center'>
             <div className='rounded-xl w-96 p-8 space-y-2 bg-white'> 
                 <div className='flex justify-center cursor-pointer mb-10'>
                     <Image className='h-8 w-fit' src={logo} alt='logo' onClick={()=> router.push('/')}/>
