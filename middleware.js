@@ -20,23 +20,23 @@ export default async function middleware(req)
         })
     } 
 
-    const userRoute = userRoutes.some((route)=> nextUrl.pathname.startsWith(route));
-    const authRoute = authRoutes.some((route)=> nextUrl.pathname.startsWith(route));
+    // const userRoute = userRoutes.some((route)=> nextUrl.pathname.startsWith(route));
+    // const authRoute = authRoutes.some((route)=> nextUrl.pathname.startsWith(route));
 
-    if(user?.role === 'visitor' || !user )
-        if(userRoute)
-            return NextResponse.redirect(new URL('/login', nextUrl))
+    // if(user?.role === 'visitor' || !user )
+    //     if(userRoute)
+    //         return NextResponse.redirect(new URL('/login', nextUrl))
 
-    if(user?.role === 'visitor' && authRoute )
-        return NextResponse.redirect(new URL('/', nextUrl))
+    // if(user?.role === 'visitor' && authRoute )
+    //     return NextResponse.redirect(new URL('/', nextUrl))
 
-    if(user?.role=== 'user' && authRoute)
-    {
-        if(authRoute)
-            return NextResponse.redirect(new URL('/home', nextUrl))
-    }
+    // if(user?.role=== 'user' && authRoute)
+    // {
+    //     if(authRoute)
+    //         return NextResponse.redirect(new URL('/home', nextUrl))
+    // }
 
-    return null
+    // return null
 }
 
 export const config = 

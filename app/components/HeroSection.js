@@ -32,7 +32,7 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="absolute right-8 top-8"
         >
-          <Button onClick={() => router.push('/login')}>Login</Button>
+          <Button onClick={() => router.push('/home')}>Login</Button>
         </motion.div>
 
         {/* Hero Content Animation */}
