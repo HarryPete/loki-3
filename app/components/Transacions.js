@@ -35,7 +35,7 @@ export const Transactions = ({id, transactions}) =>
                                 <td className={`text-center p-3 ${index % 2 === 0 ? 'bg-gray-100' : ''}`}>{label}</td>
                                 <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{id === transaction.primaryAccount._id ? (id === transaction.counterParty._id ? '' : transaction.counterParty.accountName) : transaction.primaryAccount.accountName }</td>
                                 <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{transaction.description +' '} {transaction.referral && <span onClick={()=> { setShowReferralInfo(true); setInfo(transaction.referralInfo)}} className="bg-blue-400 text-xs px-2 py-1 rounded text-white cursor-pointer"> Info</span>}</td>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{isOwnAccount && <NetworkAnalysis/>}</td>
+                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{id === transaction.primaryAccount._id ?  '' : <NetworkAnalysis/>}</td>
                             </tr>
                         </tbody>
                     )})}
