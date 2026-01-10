@@ -41,7 +41,8 @@ const accountSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Article'
         }
-    ]
+    ],
+    overview: String
 },{ timestamps: true })
 
 export const Account = mongoose.models?.Account || mongoose.model('Account', accountSchema);

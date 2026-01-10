@@ -80,10 +80,10 @@ export default function Home()
             <h2 className="text-base">Accounts</h2>
           </Card>
         </Link>
-        <Link href="">
-          <Card className='lg:h-64 h-40 flex flex-col items-center justify-center lg:gap-4 gap-2' onClick={()=> toast.error('Access denied')}>
+        <Link href="/accounts/create">
+          <Card className='lg:h-64 h-40 flex flex-col items-center justify-center lg:gap-4 gap-2'>
             <Image className="h-12 w-fit" src={transactionIcon} alt='icon'/>
-            <h2 className="text-base">Transactions</h2>
+            <h2 className="text-base">KYC</h2>
           </Card>
         </Link>
         <Link href="/screen">

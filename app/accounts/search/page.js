@@ -8,33 +8,78 @@ import TradeForm from "@/app/components/TradeForm";
 import TransactionForm from "@/app/components/TransactionForm";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import debiticon from '@/assets/debit.png'
+import crediticon from '@/assets/credit.png'
+import balance from '@/assets/balance.png'
+import transactionicon from '@/assets/transaction.png'
+import visualization from '@/assets/visualization.png'
+import ai from '@/assets/ai.png'
+import network from '@/assets/network.png'
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { LineChart, Line, PieChart, Pie,  BarChart, Bar, Cell, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Link from "next/link";
+import Image from "next/image";
+import { maskAccountNumber } from "@/utility/maskAccountNumber"
+import { AccountHeader } from "@/app/components/AccountHeader";
+import { Attachments } from "@/app/components/Attachments";
+import { Visualisation } from "@/app/components/Visualisation";
+import { SocialAnalysis } from "@/app/components/SocialAnalysis";
+import { Transactions } from "@/app/components/Transacions";
+import { TabTransactions } from "@/tabs/TabTransactions";
+import { TabCredit } from "@/tabs/TabCredit";
+import { TabDebit } from "@/tabs/TabDebit";
+import { TabBalance } from "@/tabs/TabBalance";
+import { TabVisualisation } from "@/tabs/TabVisualisation";
+import { TabOverview } from "@/tabs/TabOverview";
+import { TabSocialAnalysis } from "@/tabs/TabSocialAnalysis";
+import { TabRiskScore } from "@/tabs/TabRiskScore";
+import { TabTradeLicence } from "@/tabs/TabTradeLicence";
+import { TabMOA } from "@/tabs/TabMOA";
+import { TabKYC } from "@/tabs/TabKYC";
+import { TabPassport } from "@/tabs/TabPassport";
+import { TabRental } from "@/tabs/TabRental";
+import { PersonalChat } from "@/app/components/PersonalChat";
+import { ProfileChat } from "@/app/components/ProfileChat";
+import { TabDraft } from "@/tabs/TabDraft";
+import { TabRFI } from "@/tabs/TabRFI";
+import { TabTransaction } from "@/tabs/TabTransaction";
+import { TabPeriodicReview } from "@/tabs/TabPeriodicReview";
 
 const Search = ()  =>
 {
     const params = useSearchParams();
-    const [ showTransactionForm, setShowTransactionForm ] = useState(false);
+    const [ showVisualisation, setShowVisualisation ] = useState(false);
+    const [ showScreening, setShowScreening ] = useState(false);
+    const [ showOverview, setShowOverview ] = useState(false)
     const [ loading, setLoading ] = useState(true)
     const id = params.get('accNo') || null
     const [ account, setAccount ] = useState(null);
     const [ transactions, setTransactions ] = useState(null);
+    const [ visualisationData, setVisualisationData ] = useState(null);
+    const [ pieData, setPieData ] = useState(null)
+    const [ barData, setBarData ] = useState(null)
     const [ debit, setDebit ] = useState(0);
     const [ credit, setCredit ] = useState(0);
     const [ showMOAForm, setShowMOAForm ] = useState(false); 
     const [ showTradeForm, setShowTradeForm ] = useState(false); 
     const [ showTransactions, setShowTransactions ] = useState(false)
     const [ showReferralInfo, setShowReferralInfo ] = useState(false);
+    const [ showTransactionForm, setShowTransactionForm ] = useState(false)
     const [ info, setInfo ] = useState('')
+    const COLORS = ["#f97316", "#94a3b8", "#2196F3"];
 
     useEffect(()=>
     {
         if(id)
             getAccount();
     },[])
+
+    console.log(account)
 
     async function getAccount()
     {
@@ -44,22 +89,90 @@ const Search = ()  =>
             const response = await axios.get(url);
             setAccount(response.data);
             const sortedTransactions = response.data.transactions.sort((a,b)=> new Date(a.date) - new Date(b.date));
+
             setTransactions(sortedTransactions);
             let credits = 0;
             let debits = 0;
 
-            response.data.transactions.forEach((transaction)=>
+            response.data.transactions.forEach((transaction) => {
+            const isOwnAccount = transaction.primaryAccount?._id === id;
+
+            if (transaction.type === 'Deposit' || transaction.type === 'Inward') {
+                credits += transaction.amount;
+            } 
+            else if (transaction.type === 'Withdrawal' || transaction.type === 'Outward' || transaction.type === 'Investment') 
             {
-                if(transaction.type === 'Deposit')
-                    credits += transaction.amount
-                else if(id === transaction.primaryAccount._id)
-                    debits += transaction.amount
-                else
-                    credits += transaction.amount
-            })
+                if (isOwnAccount) 
+                {
+                debits += transaction.amount;
+                } else {
+                credits += transaction.amount;
+                }
+            }
+            });
 
             setDebit(debits);
             setCredit(credits)
+
+            const monthlyTotals = response.data.transactions.reduce((acc, tx) => {
+                if (!tx?.date || !tx?.amount) return acc;
+
+                const month = new Date(tx.date).toISOString().slice(0, 7);
+
+                if (!acc[month]) acc[month] = { Deposit: 0, Withdrawal: 0 };
+
+                if (tx.type === "Deposit" || tx.type === "Inward") {
+                    acc[month].Deposit += Number(tx.amount);
+                } 
+                else 
+                {
+                    acc[month].Withdrawal += Number(tx.amount);
+                }
+
+                return acc;
+            }, {});
+
+            const visualisationData = Object.entries(monthlyTotals).map(([month, data]) => ({
+                month,
+                ...data,
+            }));
+
+            const typeTotals = response.data.transactions.reduce(
+                (acc, tx) => {
+                    if (tx.type === "Deposit" || tx.type === "Inward") {
+                        acc.Credit += Number(tx.amount);
+                    } else {
+                        acc.Debit += Number(tx.amount);
+                    }
+                    return acc;
+                },
+                { Credit: 0, Debit: 0 }
+            );
+
+            const pieChartData = [
+                { name: "Credit", value: typeTotals.Credit },
+                { name: "Debit", value: typeTotals.Debit },
+            ];
+
+
+            const counterpartyTotals = response.data.transactions.reduce((acc, tx) => {
+                const name = tx.counterParty?.accountName || "Unknown";
+
+                if (!acc[name]) acc[name] = { name, Deposit: 0, Withdrawal: 0 };
+
+                if (tx.type === "Deposit") acc[name].Deposit += tx.amount;
+                else acc[name].Withdrawal += tx.amount;
+
+                return acc;
+            }, {});
+
+            const barData = Object.values(counterpartyTotals).sort(
+                (a, b) => (b.Deposit + b.Withdrawal) - (a.Deposit + a.Withdrawal)
+            );
+
+            setBarData(barData)
+            setPieData(pieChartData)
+            setVisualisationData(visualisationData)
         }
         catch(error)
         {
@@ -75,119 +188,48 @@ const Search = ()  =>
         return <Loader/>
 
     return(
-        <div className="w-full">
-            {account && 
-            <div className="w-full flex flex-col lg:flex-row gap-8">
-                <div className="w-full lg:w-[50%] space-y-4">
-                    {account.type === "Personal" ? <PersonalCard account={account}/> : <ProfileCrad account={account}/>}
-                    
-                    <div className="grid grid-cols-3 gap-4">
-                        <Card className="space-y-2 text-center p-4">
-                            <p className="text-muted-foreground">Credit</p>
-                            <p className="text-base font-semibold">${credit}</p>
-                        </Card>
-                        <Card className="space-y-2 text-center p-4">
-                            <p className="text-muted-foreground">Debit</p>
-                            <p className="text-base font-semibold">${debit}</p>
-                        </Card>
-                        <Card className="space-y-2 text-center p-4">
-                            <p className="text-muted-foreground">Balance</p>
-                            <p className="text-base font-semibold">${credit - debit}</p>
-                        </Card>
-                    </div>
+        <div className="w-full space-y-4">
+            <Card className="p-6 rounded-xl flex justify-between items-center bg-orange-500 font-bold text-white">
+                <h1 className="text-[28px]">Fints Banking Co.</h1>
+                <h1 className="text-[16px]">{account.type} Account</h1>
+            </Card>
 
-                    {/* {account.type === 'Entity' && <div className="space-x-2">
-                    <Dialog>
-                    <DialogTrigger asChild>
-                    <Button>Update Transactions</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Transact Now</DialogTitle>
-                        <DialogDescription>
-                            {account.entityDetails.name}
-                        </DialogDescription>
-                        <TransactionForm id={id} getAccount={getAccount} setShowTransactionForm={setShowTransactionForm}/>
-                    </DialogHeader>
-                    
-                    </DialogContent>
-                    </Dialog>
-
-                    <Dialog>
-                    <DialogTrigger asChild>
-                    <Button>Update Trade Licence</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Trade Licence</DialogTitle>
-                        <DialogDescription>
-                            {account.entityDetails.name}
-                        </DialogDescription>
-                    </DialogHeader>
-                        <TradeForm id={account.entityDetails._id} setShowTradeForm={setShowTradeForm}/>
-                    </DialogContent>
-                    </Dialog>
-
-                    <Dialog>
-                    <DialogTrigger asChild>
-                    <Button>Update MOA</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>MOA</DialogTitle>
-                        <DialogDescription>
-                            {account.entityDetails.name}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <MOAForm account={account} setShowMOA={setShowMOAForm}/>
-                    </DialogContent>
-                    </Dialog>
-                </div>} */}
-
-                </div>
-                {transactions.length>0 ?
-                <div className="w-full lg:w-[50%] flex flex-col gap-4">
-                    <Button className="text-sm w-fit" onClick={()=> setShowTransactions(!showTransactions)}>{showTransactions ? 'X' : 'View Transactions'}</Button>
-                    {showTransactions &&
-                    <Card className="flex flex-col gap-2">
-                    <table className="text-sm">
-                        <thead className="">
-                            <tr>
-                                <th className="p-6">Date</th>
-                                <th className="p-6">Amount</th>
-                                <th className="p-6">Type</th>
-                                <th className="p-6">Counterparty</th>
-                                <th className="p-6">Description</th>
-                            </tr>
-                        </thead>
-                        
-                    
-                    {transactions.map((transaction, index)=>
-                    (
-                        <tbody className="p-2" key={transaction._id}>
-                            <tr>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{new Date(transaction.date).toLocaleDateString()}</td>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>${transaction.amount}</td>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{id === transaction.primaryAccount._id ? (transaction.type === 'Deposit' ? 'Self' : 'Debit') : 'Credit'}</td>
-                                
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{id === transaction.primaryAccount._id ? (id === transaction.counterParty._id ? '' : transaction.counterParty.accountName) : transaction.primaryAccount.accountName }</td>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{transaction.description +' '} {transaction.referral && <span onClick={()=> { setShowReferralInfo(true); setInfo(transaction.referralInfo)}} className="bg-blue-400 text-xs px-2 py-1 rounded text-white cursor-pointer"> Info</span>}</td>
-                            </tr>
-                        </tbody>
-                    ))}
-                    </table>
-                </Card>}
-                </div>: <p className="w-full lg:w-[50%] text-muted-foreground text-base text-center">No Transactions</p>}
-
-                {showReferralInfo && 
-                <div className="h-[100vh] w-full fixed left-0 top-0 flex items-center justify-center" style={{backgroundColor:'rgba(0,0,0,0.7'}} onClick={()=> setShowReferralInfo(false)}>
-                    <div className="bg-white p-8 w-[40%] rounded">
-                        <h1 className="text-2xl font-bold text-center pb-4 text-red-600">Teller Info</h1>
-                        <p>{info}</p>
-                    </div>
-                </div>}
+            <div className="space-y-4">
+                <AccountHeader account={account}/>
             
-            </div>}
+                {account && 
+                <div className="grid grid-cols-4 gap-3">
+                    {account.type === "Personal" ? <TabKYC account={account}/> : <TabRiskScore account={account}/>}
+                    {account.type === "Personal" ? <TabPassport account={account}/> : <TabTradeLicence account={account}/>}
+                    {account.type === "Personal" ? <TabRental account={account}/> : <TabMOA account={account}/>}
+                    
+                    
+                    <TabOverview account={account}/>
+                    <TabPeriodicReview account={account}/>
+
+                    <TabCredit credit={credit}/>
+                    <TabDebit debit={debit}/>
+                    <TabBalance credit={credit} debit={debit}/>
+                    {/* <TabTransaction id={id} getAccount={getAccount} setShowTransactionForm={setShowTransactionForm}/> */}
+
+                    
+                    {/* <TabVisualisation visualisationData={visualisationData} pieData={pieData} barData={barData}/>
+                    <TabTransactions id={id} transactions={transactions}/>   */}
+                    {/* <TabDraft/>
+                    <TabRFI/> */}
+                    
+                    {account.type === "Personal" ? <PersonalChat account={account}/> : <ProfileChat account={account}/>}              
+                </div>}
+                {account.transactions.length>0 &&
+                <div className="space-y-4">
+                    <h1 className="text-[42px] text-orange-500 font-bold text-center pt-4">Visualisation</h1>
+                    <Visualisation visualisationData={visualisationData} pieData={pieData} barData={barData}/>
+                    <h1 className="text-[42px] text-orange-500 font-bold text-center pt-4">Transactions</h1>
+                    <Transactions id={id} transactions={transactions}/>
+                </div>}
+            </div>
+            
+            
         </div>
     )
 }
@@ -204,3 +246,11 @@ const Loading = () =>
 }
 
 export default Loading
+
+// {showReferralInfo && 
+//     <div className="h-[100vh] w-full fixed left-0 top-0 flex items-center justify-center" style={{backgroundColor:'rgba(0,0,0,0.7'}} onClick={()=> setShowReferralInfo(false)}>
+//         <div className="bg-white p-8 w-[40%] rounded">
+//             <h1 className="text-2xl font-bold text-center pb-4 text-red-600">Teller Info</h1>
+//             <p>{info}</p>
+//         </div>
+//     </div>}
