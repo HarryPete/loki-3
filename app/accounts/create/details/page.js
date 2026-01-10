@@ -3,7 +3,6 @@
 // import EntityDetails from "@/app/components/EntityDetails";
 // import PersonalDetails from "@/app/components/PersonalDetails";
 import Passport from "@/app/components/Passport";
-import { Card } from "@mui/material";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
