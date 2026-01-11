@@ -1,4 +1,5 @@
 import { NetworkAnalysis } from "./NetworkAnalysis";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 export const Transactions = ({id, transactions}) =>
 {
@@ -34,8 +35,23 @@ export const Transactions = ({id, transactions}) =>
                                 <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>${transaction.amount}</td>
                                 <td className={`text-center p-3 ${index % 2 === 0 ? 'bg-gray-100' : ''}`}>{label}</td>
                                 <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{id === transaction.primaryAccount._id ? (id === transaction.counterParty._id ? '' : transaction.counterParty.accountName) : transaction.primaryAccount.accountName }</td>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{transaction.description +' '} {transaction.referral && <span onClick={()=> { setShowReferralInfo(true); setInfo(transaction.referralInfo)}} className="bg-blue-400 text-xs px-2 py-1 rounded text-white cursor-pointer"> Info</span>}</td>
-                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{id === transaction.primaryAccount._id ?  '' : <NetworkAnalysis/>}</td>
+                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{transaction.description +' '} 
+                                    <Dialog >
+                                        <DialogTrigger asChild>
+                                            {transaction?.referral && <span className="bg-blue-400 text-xs px-2 py-1 rounded text-white cursor-pointer"> Info</span>}
+                                        </DialogTrigger>
+                                        <DialogContent className="w-[425px]">
+                                            <DialogHeader>
+                                                <DialogTitle>Teller Info</DialogTitle>
+                                                <DialogDescription>
+                                                    Last sync {new Date().toLocaleDateString()}
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <p className="border rounded-md p-4 test-sm">{transaction.referralInfo}</p>
+                                        </DialogContent>
+                                    </Dialog>
+                                </td>
+                                <td className={` text-center p-3 ${index%2 === 0 && 'bg-gray-100'}`}>{isOwnAccount ?  '' : <NetworkAnalysis/>}</td>
                             </tr>
                         </tbody>
                     )})}

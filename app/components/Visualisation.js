@@ -27,14 +27,14 @@ export const Visualisation = ({visualisationData, pieData, barData}) =>
 
                 <Area
                 type="monotone"
-                dataKey="Deposit"
+                dataKey="Credit"
                 stroke="#f97316"
                 fill="url(#depositColor)"
                 strokeWidth={2}
                 />
                 <Area
                 type="monotone"
-                dataKey="Withdrawal"
+                dataKey="Debit"
                 stroke="#94a3b8"
                 fill="url(#withdrawalColor)"
                 strokeWidth={2}
@@ -71,8 +71,8 @@ export const Visualisation = ({visualisationData, pieData, barData}) =>
                         <YAxis />
                         <Tooltip wrapperStyle={{ fontSize: "12px" }} />
                         <Legend wrapperStyle={{ fontSize: "12px" }} />
-                        <Bar dataKey="Deposit" fill="#f97316" barSize={20} />
-                        <Bar dataKey="Withdrawal" fill="#64748b" barSize={20} />
+                        <Bar dataKey="Credit" fill="#f97316" barSize={20} />
+                        <Bar dataKey="Debit" fill="#64748b" barSize={20} />
                     </BarChart>
                 </ResponsiveContainer> */}
             </div>

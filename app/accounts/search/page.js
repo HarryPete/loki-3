@@ -95,55 +95,89 @@ const Search = ()  =>
             let debits = 0;
 
             response.data.transactions.forEach((transaction) => {
-            const isOwnAccount = transaction.primaryAccount?._id === id;
+                if (!transaction?.amount) return;
 
-            if (transaction.type === 'Deposit' || transaction.type === 'Inward') {
-                credits += transaction.amount;
-            } 
-            else if (transaction.type === 'Withdrawal' || transaction.type === 'Outward' || transaction.type === 'Investment') 
-            {
-                if (isOwnAccount) 
-                {
-                debits += transaction.amount;
-                } else {
-                credits += transaction.amount;
+                const amount = Number(transaction.amount);
+                const isOwnAccount = transaction.primaryAccount?._id === id;
+
+                // CREDIT
+                if (transaction.type === 'Deposit' || transaction.type === 'Inward') {
+                    credits += amount;
+                } 
+                // DEBIT or CREDIT based on ownership
+                else if (
+                    transaction.type === 'Withdrawal' ||
+                    transaction.type === 'Outward' ||
+                    transaction.type === 'Investment'
+                ) {
+                    if (isOwnAccount) {
+                        debits += amount;
+                    } else {
+                        credits += amount;
+                    }
                 }
-            }
             });
 
             setDebit(debits);
-            setCredit(credits)
+            setCredit(credits);
+
 
             const monthlyTotals = response.data.transactions.reduce((acc, tx) => {
                 if (!tx?.date || !tx?.amount) return acc;
 
                 const month = new Date(tx.date).toISOString().slice(0, 7);
+                const isOwnAccount = tx.primaryAccount?._id === id;
 
-                if (!acc[month]) acc[month] = { Deposit: 0, Withdrawal: 0 };
+                if (!acc[month]) acc[month] = { Credit: 0, Debit: 0 };
 
-                if (tx.type === "Deposit" || tx.type === "Inward") {
-                    acc[month].Deposit += Number(tx.amount);
+                if (tx.type === 'Deposit' || tx.type === 'Inward') {
+                    acc[month].Credit += Number(tx.amount);
                 } 
-                else 
-                {
-                    acc[month].Withdrawal += Number(tx.amount);
+                else if (
+                    tx.type === 'Withdrawal' ||
+                    tx.type === 'Outward' ||
+                    tx.type === 'Investment'
+                ) {
+                    if (isOwnAccount) {
+                        acc[month].Debit += Number(tx.amount);
+                    } else {
+                        acc[month].Credit += Number(tx.amount);
+                    }
                 }
 
                 return acc;
             }, {});
 
-            const visualisationData = Object.entries(monthlyTotals).map(([month, data]) => ({
-                month,
-                ...data,
-            }));
+            const visualisationData = Object.entries(monthlyTotals).map(
+                ([month, data]) => ({
+                    month,
+                    Credit: data.Credit,
+                    Debit: data.Debit
+                })
+            );
 
             const typeTotals = response.data.transactions.reduce(
                 (acc, tx) => {
-                    if (tx.type === "Deposit" || tx.type === "Inward") {
-                        acc.Credit += Number(tx.amount);
-                    } else {
-                        acc.Debit += Number(tx.amount);
+                    if (!tx?.amount) return acc;
+
+                    const amount = Number(tx.amount);
+                    const isOwnAccount = tx.primaryAccount?._id === id;
+
+                    if (tx.type === 'Deposit' || tx.type === 'Inward') {
+                        acc.Credit += amount;
+                    } 
+                    else if (
+                        tx.type === 'Withdrawal' ||
+                        tx.type === 'Outward' ||
+                        tx.type === 'Investment'
+                    ) {
+                        if (isOwnAccount) {
+                            acc.Debit += amount;
+                        } else {
+                            acc.Credit += amount;
+                        }
                     }
+
                     return acc;
                 },
                 { Credit: 0, Debit: 0 }
@@ -154,20 +188,41 @@ const Search = ()  =>
                 { name: "Debit", value: typeTotals.Debit },
             ];
 
-
             const counterpartyTotals = response.data.transactions.reduce((acc, tx) => {
+                if (!tx?.amount) return acc;
+
+                const amount = Number(tx.amount);
+                const isOwnAccount = tx.primaryAccount?._id === id;
                 const name = tx.counterParty?.accountName || "Unknown";
 
-                if (!acc[name]) acc[name] = { name, Deposit: 0, Withdrawal: 0 };
+                if (!acc[name]) {
+                    acc[name] = { 
+                        name, 
+                        Credit: 0, 
+                        Debit: 0 
+                    };
+                }
 
-                if (tx.type === "Deposit") acc[name].Deposit += tx.amount;
-                else acc[name].Withdrawal += tx.amount;
+                if (tx.type === 'Deposit' || tx.type === 'Inward') {
+                    acc[name].Credit += amount;
+                } 
+                else if (
+                    tx.type === 'Withdrawal' ||
+                    tx.type === 'Outward' ||
+                    tx.type === 'Investment'
+                ) {
+                    if (isOwnAccount) {
+                        acc[name].Debit += amount;
+                    } else {
+                        acc[name].Credit += amount;
+                    }
+                }
 
                 return acc;
             }, {});
 
             const barData = Object.values(counterpartyTotals).sort(
-                (a, b) => (b.Deposit + b.Withdrawal) - (a.Deposit + a.Withdrawal)
+                (a, b) => (b.Credit + b.Debit) - (a.Credit + a.Debit)
             );
 
             setBarData(barData)
